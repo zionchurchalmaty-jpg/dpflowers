@@ -35,12 +35,15 @@ export function SearchableSelect({
   const filteredItems = items.filter(
     (item) =>
       item.label.toLowerCase().includes(search.toLowerCase()) ||
-      item.subLabel?.toLowerCase().includes(search.toLowerCase())
+      item.subLabel?.toLowerCase().includes(search.toLowerCase()),
   );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -54,10 +57,14 @@ export function SearchableSelect({
         className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className={selectedItem ? "text-foreground" : "text-muted-foreground"}>
+        <span
+          className={selectedItem ? "text-foreground" : "text-muted-foreground"}
+        >
           {selectedItem ? selectedItem.label : placeholder}
         </span>
-        <ChevronDown className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`h-4 w-4 opacity-50 transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
       </div>
 
       {isOpen && (
@@ -85,12 +92,20 @@ export function SearchableSelect({
                     setSearch("");
                   }}
                 >
-                  <span className="font-medium text-gray-900">{item.label}</span>
-                  {item.subLabel && <span className="text-gray-400 text-xs ml-2">{item.subLabel}</span>}
+                  <span className="font-medium text-gray-900">
+                    {item.label}
+                  </span>
+                  {item.subLabel && (
+                    <span className="text-gray-400 text-xs ml-2">
+                      {item.subLabel}
+                    </span>
+                  )}
                 </div>
               ))
             ) : (
-              <div className="px-3 py-4 text-sm text-center text-gray-500">{emptyText}</div>
+              <div className="px-3 py-4 text-sm text-center text-gray-500">
+                {emptyText}
+              </div>
             )}
           </div>
         </div>

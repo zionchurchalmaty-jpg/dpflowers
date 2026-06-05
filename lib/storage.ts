@@ -6,7 +6,9 @@ export interface UploadProgress {
   downloadURL?: string;
 }
 
-{/* Validates file type and size (max 10MB) */}
+{
+  /* Validates file type and size (max 10MB) */
+}
 export function validateImageFile(file: File): string | null {
   const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
   if (!validTypes.includes(file.type)) {
@@ -18,17 +20,18 @@ export function validateImageFile(file: File): string | null {
   return null;
 }
 
-{/* Handles image upload to Firebase Storage with progress tracking */}
+{
+  /* Handles image upload to Firebase Storage with progress tracking */
+}
 export function uploadImage(
   file: File,
   folder: string = "images",
-  onProgress?: (progress: { progress: number }) => void
+  onProgress?: (progress: { progress: number }) => void,
 ): { promise: Promise<{ url: string }> } {
-  
   const timestamp = Date.now();
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
   const fullPath = `${folder}/${timestamp}_${cleanFileName}`;
-  
+
   const storageRef = ref(storage, fullPath);
   const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -36,7 +39,8 @@ export function uploadImage(
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         if (onProgress) onProgress({ progress });
       },
       (error) => {
@@ -52,7 +56,7 @@ export function uploadImage(
           console.error("Error getting download URL:", error);
           reject(error);
         }
-      }
+      },
     );
   });
 

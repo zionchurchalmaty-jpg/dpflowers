@@ -38,9 +38,15 @@ export function ContentGrid({
         <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-2 md:gap-3">
             {icon && <div className="text-yellow-400 shrink-0">{icon}</div>}
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">{title}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+              {title}
+            </h2>
           </div>
-          {subtitle && <div className="text-gray-500 mt-2 text-sm md:text-base">{subtitle}</div>}
+          {subtitle && (
+            <div className="text-gray-500 mt-2 text-sm md:text-base">
+              {subtitle}
+            </div>
+          )}
         </div>
       )}
 

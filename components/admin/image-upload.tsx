@@ -1,26 +1,33 @@
 "use client";
 
 import { useCallback, useState, useRef } from "react";
-import { 
-  X, Link as LinkIcon, Loader2, Image as ImageIcon 
-} from "lucide-react";
-import { 
-  uploadImage, 
-  validateImageFile, 
-} from "@/lib/storage";
+import { X, Link as LinkIcon, Loader2, Image as ImageIcon } from "lucide-react";
+import { uploadImage, validateImageFile } from "@/lib/storage";
 
-{/* Reusable internal UI components */}
-const Button = ({ children, onClick, variant = "primary", className, disabled, type = "button", ...props }: any) => {
-  const base = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all h-9 px-4 disabled:opacity-50 shadow-sm";
+{
+  /* Reusable internal UI components */
+}
+const Button = ({
+  children,
+  onClick,
+  variant = "primary",
+  className,
+  disabled,
+  type = "button",
+  ...props
+}: any) => {
+  const base =
+    "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all h-9 px-4 disabled:opacity-50 shadow-sm";
   const styles = {
     primary: "bg-[#1A73E8] text-white hover:bg-[#1557B0]",
-    ghost: "bg-white text-[#5F6368] hover:bg-[#F1F3F4] hover:text-[#202124] border border-[#DADCE0]",
+    ghost:
+      "bg-white text-[#5F6368] hover:bg-[#F1F3F4] hover:text-[#202124] border border-[#DADCE0]",
   };
   return (
-    <button 
+    <button
       type={type}
-      className={`${base} ${styles[variant as keyof typeof styles]} ${className}`} 
-      disabled={disabled} 
+      className={`${base} ${styles[variant as keyof typeof styles]} ${className}`}
+      disabled={disabled}
       onClick={onClick}
       {...props}
     >
@@ -30,9 +37,9 @@ const Button = ({ children, onClick, variant = "primary", className, disabled, t
 };
 
 const Input = (props: any) => (
-  <input 
-    {...props} 
-    className="w-full bg-white border border-[#DADCE0] rounded-md px-3 py-2 text-[#202124] text-sm focus:outline-none focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] transition-all placeholder:text-[#9AA0A6] disabled:opacity-50" 
+  <input
+    {...props}
+    className="w-full bg-white border border-[#DADCE0] rounded-md px-3 py-2 text-[#202124] text-sm focus:outline-none focus:border-[#1A73E8] focus:ring-1 focus:ring-[#1A73E8] transition-all placeholder:text-[#9AA0A6] disabled:opacity-50"
   />
 );
 
@@ -79,7 +86,7 @@ export function ImageUpload({
           setUploadProgress(progress.progress);
         });
         const result = await promise;
-        
+
         setUrlInput("");
         onChange(result.url);
       } catch (err) {
@@ -90,7 +97,7 @@ export function ImageUpload({
         onUploadingChange?.(false);
       }
     },
-    [folder, onChange, onUploadingChange]
+    [folder, onChange, onUploadingChange],
   );
 
   const handleDrop = useCallback(
@@ -100,7 +107,7 @@ export function ImageUpload({
       const file = e.dataTransfer.files[0];
       if (file) handleFile(file);
     },
-    [handleFile]
+    [handleFile],
   );
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -119,7 +126,7 @@ export function ImageUpload({
       if (file) handleFile(file);
       e.target.value = "";
     },
-    [handleFile]
+    [handleFile],
   );
 
   const submitUrl = useCallback(() => {
@@ -135,24 +142,36 @@ export function ImageUpload({
     setUrlInput("");
   }, [onChange]);
 
-  {/* Revert to input mode if the provided image URL fails to load */}
+  {
+    /* Revert to input mode if the provided image URL fails to load */
+  }
   const handleImageError = () => {
     setError("Не удалось загрузить изображение. Ссылка недоступна.");
-    
+
     if (!(value && !value.startsWith("http"))) {
-       setUrlInput(value);
+      setUrlInput(value);
     }
 
-    onChange(""); 
+    onChange("");
   };
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {label && <label className="block text-sm font-medium text-[#202124]">{label}</label>}
+      {label && (
+        <label className="block text-sm font-medium text-[#202124]">
+          {label}
+        </label>
+      )}
 
       {value ? (
         <div className="relative rounded-lg border border-[#DADCE0] overflow-hidden bg-[#F8F9FA] group animate-in fade-in">
-          <div className="relative w-full" style={{ aspectRatio: aspectRatio === "16/9" ? 16/9 : "auto", minHeight: '200px' }}>
+          <div
+            className="relative w-full"
+            style={{
+              aspectRatio: aspectRatio === "16/9" ? 16 / 9 : "auto",
+              minHeight: "200px",
+            }}
+          >
             <img
               src={value}
               alt="Uploaded content"
@@ -171,12 +190,12 @@ export function ImageUpload({
         </div>
       ) : (
         <div className="space-y-4 animate-in fade-in">
-          
           <div
             className={`relative rounded-lg border-2 border-dashed transition-colors cursor-pointer bg-white
-              ${isDragging 
-                ? "border-[#1A73E8] bg-[#E8F0FE]/50" 
-                : "border-[#E8EAED] hover:border-[#1A73E8] hover:bg-[#F8F9FA]"
+              ${
+                isDragging
+                  ? "border-[#1A73E8] bg-[#E8F0FE]/50"
+                  : "border-[#E8EAED] hover:border-[#1A73E8] hover:bg-[#F8F9FA]"
               } 
               ${isUploading ? "pointer-events-none" : ""}`}
             onDrop={handleDrop}
@@ -194,13 +213,15 @@ export function ImageUpload({
 
             <div
               className="flex flex-col items-center justify-center gap-3 p-6"
-              style={{ minHeight: '140px' }}
+              style={{ minHeight: "140px" }}
             >
               {isUploading ? (
                 <>
                   <Loader2 className="h-8 w-8 text-[#1A73E8] animate-spin" />
                   <div className="text-center">
-                    <p className="text-sm font-medium text-[#202124]">Загрузка...</p>
+                    <p className="text-sm font-medium text-[#202124]">
+                      Загрузка...
+                    </p>
                   </div>
                 </>
               ) : (
@@ -220,7 +241,9 @@ export function ImageUpload({
 
           <div className="relative flex items-center">
             <div className="flex-grow border-t border-[#E8EAED]"></div>
-            <span className="flex-shrink-0 mx-3 text-[11px] text-[#9AA0A6] uppercase tracking-wider font-medium">или ссылка</span>
+            <span className="flex-shrink-0 mx-3 text-[11px] text-[#9AA0A6] uppercase tracking-wider font-medium">
+              или ссылка
+            </span>
             <div className="flex-grow border-t border-[#E8EAED]"></div>
           </div>
 
@@ -239,7 +262,12 @@ export function ImageUpload({
               }}
               disabled={isUploading}
             />
-            <Button onClick={submitUrl} disabled={!urlInput.trim() || isUploading} variant="ghost" className="px-3">
+            <Button
+              onClick={submitUrl}
+              disabled={!urlInput.trim() || isUploading}
+              variant="ghost"
+              className="px-3"
+            >
               <LinkIcon className="w-4 h-4" />
             </Button>
           </div>

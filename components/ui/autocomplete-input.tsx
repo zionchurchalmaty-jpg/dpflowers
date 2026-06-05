@@ -10,13 +10,21 @@ interface AutocompleteInputProps {
   placeholder?: string;
 }
 
-export function AutocompleteInput({ value, onChange, options, placeholder }: AutocompleteInputProps) {
+export function AutocompleteInput({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: AutocompleteInputProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     }
@@ -25,7 +33,7 @@ export function AutocompleteInput({ value, onChange, options, placeholder }: Aut
   }, []);
 
   const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes((value || "").toLowerCase())
+    opt.toLowerCase().includes((value || "").toLowerCase()),
   );
 
   return (
@@ -40,7 +48,7 @@ export function AutocompleteInput({ value, onChange, options, placeholder }: Aut
         placeholder={placeholder}
         autoComplete="off"
       />
-      
+
       {showDropdown && filteredOptions.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-50 max-h-48 overflow-y-auto">
           {filteredOptions.map((opt, idx) => (

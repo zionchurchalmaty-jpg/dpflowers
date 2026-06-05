@@ -1,158 +1,80 @@
 "use client";
 
-import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Phone, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { Mail, Phone } from "lucide-react";
 
 export default function Navbar() {
-  const t = useTranslations("Navbar");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const closeMenu = () => setIsMobileMenuOpen(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="relative flex items-center justify-between px-4 md:px-8 py-3 md:py-4 bg-white shadow-sm font-sans z-50">
-      <div className="flex items-center gap-3">
-        <Link
-          href="/"
-          className="flex items-center gap-2 md:gap-3"
-          onClick={closeMenu}
-        >
-          <Image
-            src="/logo.svg"
-            alt="FindDoctor Logo"
-            width={40}
-            height={40}
-            className="w-8 h-8 md:w-10 md:h-10 object-contain"
-          />
-
-          <div className="flex flex-col">
-            <span className="text-lg md:text-xl font-bold leading-none">
-              FindDoctor
-            </span>
-            <span className="text-[9px] md:text-[10px] text-gray-500 uppercase tracking-wide">
-              {t("logoSubtitle")}
-            </span>
-          </div>
-        </Link>
-      </div>
-
-      <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-gray-700">
-        <Link href="/" className="hover:text-blue-600 transition-colors">
-          {t("home")}
-        </Link>
-        <Link href="/cases" className="hover:text-blue-600 transition-colors">
-          {t("cases")}
-        </Link>
-        <Link href="/blog" className="hover:text-blue-600 transition-colors">
-          {t("blog")}
-        </Link>
-        <Link href="/about" className="hover:text-blue-600 transition-colors">
-          {t("about")}
-        </Link>
-      </nav>
-
-      <div className="flex items-center gap-3 md:gap-6">
-        <div className="hidden lg:flex items-center gap-6">
-          <Button
-            asChild
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-5"
-          >
-            <Link href="/for-doctors">{t("forDoctors")}</Link>
-          </Button>
-
-          <div className="flex items-center gap-2">
-            <Phone className="w-5 h-5 text-blue-600" />
-            <div className="flex flex-col">
-              <a
-                href="tel:+77052793078"
-                className="font-bold text-sm hover:text-[#2563EB] transition-colors cursor-pointer inline-block"
-              >
-                +7 (705) 279-30-78
-              </a>{" "}
-              <span className="text-[10px] text-gray-400 uppercase tracking-wider">
-                {t("phoneSub")}
-              </span>
-            </div>
+    <header className="w-full fixed top-0 z-50 flex flex-col">
+      <div 
+        className={`bg-[#1C2331] text-gray-300 px-6 hidden md:block overflow-hidden transition-all duration-100 ease-in-out ${
+          isScrolled ? "max-h-0 py-0 opacity-0" : "max-h-12 py-2.5 opacity-100"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto flex justify-between items-center text-[13px] tracking-wide">
+          <a href="mailto:info@vtstroy.kz" className="flex items-center gap-2 hover:text-white transition-colors">
+            <Mail className="w-3.5 h-3.5 text-[#f99c00]" /> info@vtstroy.kz
+          </a>
+          <div className="flex gap-8">
+            <a href="tel:+77776862385" className="flex items-center gap-2 hover:text-white transition-colors">
+              <Phone className="w-3.5 h-3.5 text-[#f99c00]" /> +7 (777) 686-23-85
+            </a>
+            <a href="tel:+77776862385" className="flex items-center gap-2 hover:text-white transition-colors">
+              <Phone className="w-3.5 h-3.5 text-[#f99c00]" /> +7 (777) 686-23-85
+            </a>
           </div>
         </div>
-
-        <button
-          className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
-        </button>
       </div>
 
-      {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-lg lg:hidden flex flex-col px-4 py-6 gap-6 z-50">
-          <nav className="flex flex-col gap-4 text-base font-medium text-gray-800">
-            <Link href="/" onClick={closeMenu} className="hover:text-blue-600">
-              {t("home")}
+      <div 
+        className={`bg-white transition-all duration-100 border-[#f99c00] ${
+          isScrolled ? "border-b-2 shadow-md" : "border-b-[4px] shadow-sm"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 h-[100px] flex justify-between items-center">
+          
+          <div className="flex-1 flex justify-start">
+            <Link href="/" className="flex items-center shrink-0">
+              <img 
+                src="/logo.jpg" 
+                alt="VT STROY Logo" 
+                className="h-20 w-auto object-contain" 
+              />
             </Link>
-            <Link
-              href="/cases"
-              onClick={closeMenu}
-              className="hover:text-blue-600"
-            >
-              {t("cases")}
-            </Link>
-            <Link
-              href="/blog"
-              onClick={closeMenu}
-              className="hover:text-blue-600"
-            >
-              {t("blog")}
-            </Link>
-            <Link
-              href="/about"
-              onClick={closeMenu}
-              className="hover:text-blue-600"
-            >
-              {t("about")}
-            </Link>
+          </div>
+
+          <nav className="hidden lg:flex items-center gap-10 relative px-8 py-3.5 shrink-0">
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-[2px] border-l-[2px] border-[#f99c00]" />
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-[2px] border-r-[2px] border-[#f99c00]" />
+            
+            <Link href="/" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Главная</Link>
+            <Link href="/#services" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Услуги</Link>
+            <Link href="/#contact" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Контакты</Link>
+            <Link href="/blog" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Блог</Link>
+            <Link href="/projects" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Наши работы</Link>
+            <Link href="/#contact" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Контакты</Link>
           </nav>
 
-          <div className="w-full h-px bg-gray-100" />
-
-          <div className="flex flex-col gap-4">
-            <Button
-              asChild
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl w-full"
-            >
-              <Link href="/for-doctors" onClick={closeMenu}>
-                {t("forDoctors")}
-              </Link>
-            </Button>
-
-            <div className="flex items-center gap-3 mt-2">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <Phone className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex flex-col">
-                <a
-                  href="tel:+77052793078"
-                  className="font-bold text-sm text-gray-900 hover:text-[#2563EB] transition-colors cursor-pointer inline-block"
-                >
-                  +7 (705) 279-30-78
-                </a>
-                <span className="text-[10px] text-gray-400 uppercase tracking-wider">
-                  {t("phoneSub")}
-                </span>
-              </div>
-            </div>
+          <div className="flex-1 flex justify-end">
+            <a href="#contact" className="hidden md:flex bg-[#f99c00] hover:bg-[#e08c00] text-gray-900 font-bold text-sm px-6 py-2.5 rounded-md transition-colors">
+              Консультация
+            </a>
           </div>
+          
         </div>
-      )}
+      </div>
     </header>
   );
 }

@@ -24,12 +24,11 @@ import {
 } from "@/lib/firestore/client-content";
 import type {
   Content,
-  ContentInput,
   ContentType,
   SEOData,
   ContentStatus,
 } from "@/lib/firestore/types";
-import { Loader2, Save, Trash2, Lock, Unlock } from "lucide-react";
+import { Loader2, Save, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,6 +59,7 @@ export function ContentForm({
   const [content, setContent] = useState(initialData?.content || "");
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || "");
   const [isSeo, setIsSeo] = useState(initialData?.isSeo || false);
+  const [readingTime, setReadingTime] = useState(initialData?.readingTime || "");
 
   const [image, setImage] = useState(
     initialData?.image || initialData?.coverImage || "",
@@ -91,12 +91,11 @@ export function ContentForm({
   const [error, setError] = useState<string | null>(null);
 
   const typeConfig: Record<string, { label: string; backPath: string }> = {
-    blog: { label: "Статья", backPath: "/admin/blog" },
-    cases: { label: "Кейс", backPath: "/admin/cases" },
-    leads: { label: "Заявка", backPath: "/admin/leads" },
+    content: { label: "Запись", backPath: "/admin/content" },
+    projects: { label: "Объект", backPath: "/admin/projects" },
   };
 
-  const config = typeConfig[contentType] || typeConfig.blog;
+  const config = typeConfig[contentType] || typeConfig.content;
   const contentTypeLabel = config.label;
   const backPath = config.backPath;
 
@@ -109,7 +108,7 @@ export function ContentForm({
     setTags(parsed);
   };
 
-const handleSubmit = async (submitStatus?: ContentStatus) => {
+  const handleSubmit = async (submitStatus?: ContentStatus) => {
     if (!user) return;
 
     const finalStatus = submitStatus || status;
@@ -146,6 +145,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
         status: finalStatus,
         seo: cleanedSeo,
         isSeo,
+        readingTime: readingTime.trim()
       };
 
       if (isEditing && initialData) {
@@ -154,7 +154,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
         await createContent(
           input,
           user.uid,
-          user.displayName || user.email || "Unknown",
+          user.displayName || user.email || "Admin",
         );
       }
 
@@ -184,19 +184,20 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-navy">
+    <div className="mx-auto max-w-5xl space-y-6">
+      
+      <div className="flex items-center justify-between bg-white p-4 md:px-6 rounded-xl shadow-sm border border-gray-200">
+        <h1 className="text-xl font-extrabold text-gray-900">
           {isEditing
             ? `Редактирование: ${contentTypeLabel}`
             : `Создание: ${contentTypeLabel}`}
         </h1>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {isEditing && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10">
+                <Button variant="outline" size="sm" className="text-red-500 hover:bg-red-50 hover:text-red-600 border-red-200">
                   <Trash2 className="mr-2 h-4 w-4" /> Удалить
                 </Button>
               </AlertDialogTrigger>
@@ -207,7 +208,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Отмена</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+                  <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
                     {deleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Удалить
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -215,54 +216,78 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
             </AlertDialog>
           )}
 
-          <Button size="sm" onClick={() => handleSubmit()} disabled={saving || imageUploading} className="bg-[#1A73E8] hover:bg-[#1557B0] text-white">
+          <Button 
+            size="sm" 
+            onClick={() => handleSubmit()} 
+            disabled={saving || imageUploading} 
+            className="bg-[#f99c00] hover:bg-[#e08c00] text-gray-900 font-bold px-6"
+          >
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} Сохранить
           </Button>
         </div>
       </div>
 
-      {error && <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{error}</div>}
+      {error && <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600 border border-red-100">{error}</div>}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <div className="space-y-2">
-            <Label htmlFor="title">Заголовок</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Введите заголовок..." className="text-lg" />
-          </div>
+          
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-gray-700 font-bold">Заголовок</Label>
+              <Input 
+                id="title" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)} 
+                placeholder="Введите заголовок..." 
+                className="text-lg bg-gray-50 focus-visible:ring-[#f99c00]" 
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label>Содержимое</Label>
-            <ContentEditor content={content} onChange={setContent} placeholder="Напишите основной текст здесь..." />
-          </div>
+            <div className="space-y-2">
+              <Label className="text-gray-700 font-bold">Содержимое</Label>
+              <ContentEditor content={content} onChange={setContent} placeholder="Напишите основной текст здесь..." />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="excerpt">Краткое описание (для списка статей)</Label>
-            <Textarea id="excerpt" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Краткое содержание для карточки превью..." rows={3} />
+            <div className="space-y-2">
+              <Label htmlFor="excerpt" className="text-gray-700 font-bold">Краткое описание (для списка статей)</Label>
+              <Textarea 
+                id="excerpt" 
+                value={excerpt} 
+                onChange={(e) => setExcerpt(e.target.value)} 
+                placeholder="Краткое содержание для карточки превью..." 
+                rows={3} 
+                className="bg-gray-50 focus-visible:ring-[#f99c00]"
+              />
+            </div>
           </div>
         </div>
 
         <div className="space-y-6">
-<div className="space-y-2">
-  <Label>Размещение статьи</Label>
-  <Select
-    value={isSeo ? "seo" : "blog"}
-    onValueChange={(v) => setIsSeo(v === "seo")}
-  >
-    <SelectTrigger>
-      <SelectValue />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="blog">В блоге</SelectItem>
-      <SelectItem value="seo">SEO-статья</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+          <div className="space-y-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             
+            {contentType === "content" && (
+              <div className="space-y-2">
+                <Label className="text-gray-700 font-bold">Размещение записи</Label>
+                <Select
+                  value={isSeo ? "seo" : "blog"}
+                  onValueChange={(v) => setIsSeo(v === "seo")}
+                >
+                  <SelectTrigger className="focus:ring-[#f99c00]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="blog">В блоге</SelectItem>
+                    <SelectItem value="seo">SEO-статья</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             <div className="space-y-2">
-              <Label htmlFor="status">Статус публикации</Label>
+              <Label htmlFor="status" className="text-gray-700 font-bold">Статус публикации</Label>
               <Select value={status} onValueChange={(v) => setStatus(v as ContentStatus)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="focus:ring-[#f99c00]"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="draft">Черновик</SelectItem>
                   <SelectItem value="published">Опубликовано</SelectItem>
@@ -270,7 +295,29 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
               </Select>
             </div>
 
-          <div className="space-y-4 rounded-xl border bg-card p-4 shadow-sm">
+            <div className="space-y-2">
+              <Label htmlFor="tags" className="text-gray-700 font-bold">Теги</Label>
+              <Input 
+                id="tags" 
+                value={tagsInput} 
+                onChange={(e) => handleTagsChange(e.target.value)} 
+                placeholder="склад, ангар, ГОСТ" 
+                className="focus-visible:ring-[#f99c00]"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+  <Label htmlFor="readingTime" className="text-gray-700 font-bold">Время чтения</Label>
+  <Input 
+    id="readingTime" 
+    value={readingTime} 
+    onChange={(e) => setReadingTime(e.target.value)} 
+    placeholder="например: 5 мин" 
+    className="bg-gray-50 focus-visible:ring-[#f99c00]" 
+  />
+</div>
+
+          <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <ImageUpload 
               value={image} 
               onChange={setImage} 
@@ -281,50 +328,48 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
               aspectRatio="16/9" 
             />
 
-              <div className="space-y-3 pt-2 border-t mt-4">
-                <h4 className="text-sm font-medium leading-none">Метаданные обложки</h4>
-                
-                <div className="space-y-1.5">
-                  <Label htmlFor="imageAlt" className="text-xs text-muted-foreground">Alt</Label>
-                  <Input 
-                    id="imageAlt" 
-                    value={seo.imageAlt || ""} 
-                    onChange={(e) => setSeo({ ...seo, imageAlt: e.target.value })} 
-                    placeholder="Описание фото для SEO" 
-                    className="h-8 text-sm" 
-                  />
-                </div>
-                
-                <div className="space-y-1.5">
-                  <Label htmlFor="imageTitle" className="text-xs text-muted-foreground">Заголовок</Label>
-                  <Input 
-                    id="imageTitle" 
-                    value={seo.imageTitle || ""} 
-                    onChange={(e) => setSeo({ ...seo, imageTitle: e.target.value })} 
-                    className="h-8 text-sm" 
-                  />
-                </div>
-                
-                <div className="space-y-1.5">
-                  <Label htmlFor="imageDesc" className="text-xs text-muted-foreground">Описание (Description)</Label>
-                  <Textarea 
-                    id="imageDesc" 
-                    value={seo.imageDescription || ""} 
-                    onChange={(e) => setSeo({ ...seo, imageDescription: e.target.value })} 
-                    rows={2} 
-                    className="text-sm resize-none" 
-                  />
-                </div>
+            <div className="space-y-3 pt-4 border-t border-gray-100 mt-4">
+              <h4 className="text-sm font-bold text-gray-900 leading-none">Метаданные обложки</h4>
+              
+              <div className="space-y-1.5">
+                <Label htmlFor="imageAlt" className="text-xs text-gray-500">Alt</Label>
+                <Input 
+                  id="imageAlt" 
+                  value={seo.imageAlt || ""} 
+                  onChange={(e) => setSeo({ ...seo, imageAlt: e.target.value })} 
+                  placeholder="Описание фото для SEO" 
+                  className="h-8 text-sm focus-visible:ring-[#f99c00]" 
+                />
               </div>
-          </div>
-            <div className="space-y-2">
-              <Label htmlFor="tags">Теги</Label>
-              <Input id="tags" value={tagsInput} onChange={(e) => handleTagsChange(e.target.value)} placeholder="тег1, тег2, тег3" />
+              
+              <div className="space-y-1.5">
+                <Label htmlFor="imageTitle" className="text-xs text-gray-500">Заголовок (Title)</Label>
+                <Input 
+                  id="imageTitle" 
+                  value={seo.imageTitle || ""} 
+                  onChange={(e) => setSeo({ ...seo, imageTitle: e.target.value })} 
+                  className="h-8 text-sm focus-visible:ring-[#f99c00]" 
+                />
+              </div>
+              
+              <div className="space-y-1.5">
+                <Label htmlFor="imageDesc" className="text-xs text-gray-500">Описание (Description)</Label>
+                <Textarea 
+                  id="imageDesc" 
+                  value={seo.imageDescription || ""} 
+                  onChange={(e) => setSeo({ ...seo, imageDescription: e.target.value })} 
+                  rows={2} 
+                  className="text-sm resize-none focus-visible:ring-[#f99c00]" 
+                />
+              </div>
             </div>
           </div>
 
-          <SEOFields value={seo} onChange={setSeo} defaultTitle={title} image={image} />
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <SEOFields value={seo} onChange={setSeo} defaultTitle={title} image={image} />
+          </div>
         </div>
       </div>
+    </div>
   );
 }

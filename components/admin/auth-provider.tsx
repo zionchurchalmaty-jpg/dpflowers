@@ -29,7 +29,9 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const ALLOWED_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAIL
-  ? process.env.NEXT_PUBLIC_ADMIN_EMAIL.split(",").map((email) => email.trim().toLowerCase())
+  ? process.env.NEXT_PUBLIC_ADMIN_EMAIL.split(",").map((email) =>
+      email.trim().toLowerCase(),
+    )
   : [];
 
 function isEmailAuthorized(email: string | null): boolean {
@@ -41,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(!!auth);
   const [error, setError] = useState<string | null>(
-    auth ? null : "Firebase Auth не инициализирован. Проверьте настройки."
+    auth ? null : "Firebase Auth не инициализирован. Проверьте настройки.",
   );
 
   const isAuthorized = user ? isEmailAuthorized(user.email) : false;
@@ -78,7 +80,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
 
-      {/* Force logout if the authenticated user is not on the whitelist */}
+      {
+        /* Force logout if the authenticated user is not on the whitelist */
+      }
       if (!isEmailAuthorized(result.user.email)) {
         await signOut(auth);
         setError(`Доступ запрещен: ${result.user.email} не является админом.`);
@@ -93,12 +97,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) return;
     try {
       await signOut(auth);
-    } catch (err: any) {
-    }
+    } catch (err: any) {}
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthorized, signInWithGoogle, logout, error }}>
+    <AuthContext.Provider
+      value={{ user, loading, isAuthorized, signInWithGoogle, logout, error }}
+    >
       {children}
     </AuthContext.Provider>
   );

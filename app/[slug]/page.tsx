@@ -1,70 +1,50 @@
 import { notFound } from "next/navigation";
-import { getContentBySlug } from "@/lib/firestore/client-content";
+import { getContentBySlug, getContentById } from "@/lib/firestore/client-content";
 import Image from "next/image";
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Calendar } from "lucide-react";
+import { ArrowLeft, Calendar, Clock } from "lucide-react";
 
 interface PageProps {
-  params: Promise<{ slug: string; locale?: string }>;
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug, locale } = await params;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  let article: any = await getContentBySlug(slug, "content");
+  if (!article) article = await getContentById(slug, "content");
 
-
-  const article = await getContentBySlug(slug, "blog");
-
-  if (!article) return { title: "Статья не найдена" };
+  if (!article) return { title: "Статья не найдена | VT STROY" };
 
   const imageUrl = article.image || "/images/blog-placeholder.png";
   const imageAlt = article.seo?.imageAlt || article.title;
 
   return {
-    title: article.seo?.metaTitle || article.title,
+    title: article.seo?.metaTitle || `${article.title} | База знаний VT STROY`,
     description: article.seo?.metaDescription || article.excerpt,
     openGraph: {
-      images: [
-        {
-          url: imageUrl,
-          alt: imageAlt,
-        },
-      ],
+      images: [{ url: imageUrl, alt: imageAlt }],
     },
   };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug, locale } = await params;
+  const { slug } = await params;
 
-  if (locale === "kz") {
-    notFound();
-  }
+  let article: any = await getContentBySlug(slug, "content");
+  if (!article) article = await getContentById(slug, "content");
 
-  const article = await getContentBySlug(slug, "blog");
+  if (!article) notFound();
 
-  if (!article) {
-    notFound();
-  }
+  const formattedDate = article.date || article.createdAt
+    ? new Date(article.date || article.createdAt).toLocaleDateString("ru-RU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : "";
 
-  const backHref = article.isSeo ? "/seo-blog" : "/blog";
-  const backText = article.isSeo ? "Вернуться к статьям" : "Вернуться к блогу";
-
-  const rawDate = article.date || article.createdAt;
-  const dateObject =
-    rawDate && typeof rawDate === "object" && "toDate" in rawDate
-      ? rawDate.toDate()
-      : new Date(rawDate || Date.now());
-
-  const formattedDate = dateObject.toLocaleDateString("ru-RU", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-
-  const firstTag = article.tags && article.tags.length > 0 ? article.tags[0] : null;
+  const tags = Array.isArray(article.tags) ? article.tags : [];
 
   return (
     <>
@@ -74,47 +54,64 @@ export default async function BlogPostPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: article.seo.schemaMarkup }}
         />
       )}
-      <main className="min-h-screen bg-white pt-8 pb-20 font-sans">
+      <main className="min-h-screen bg-[#FAFAFA] pt-42 pb-24 font-sans">
         
-        <div className="border-b border-gray-100 mb-10 pb-4">
-          <div className="max-w-4xl mx-auto px-6">
+        {!article.isSeo && (
+          <div className="max-w-4xl mx-auto px-6 mb-10">
             <Link
-              href={backHref}
-              className="inline-flex items-center text-sm font-medium text-[#2563EB] hover:text-blue-800 transition-colors"
+              href="/blog"
+              className="group inline-flex items-center text-[15px] font-bold text-gray-500 hover:text-[#f99c00] transition-colors"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              {backText}
+              <ArrowLeft className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" />
+              Вернуться к списку статей
             </Link>
           </div>
-        </div>
+        )}
 
         <div className="max-w-4xl mx-auto px-6 mb-10">
-          <div className="flex items-center gap-4 mb-6">
-            {firstTag && (
-              <span className="bg-[#EFF6FF] text-[#2563EB] px-3 py-1 rounded-md text-xs font-semibold tracking-wide">
-                {firstTag}
-              </span>
+          <div className="flex flex-wrap items-center gap-4 mb-6">
+            {tags.length > 0 && (
+              <div className="flex gap-2">
+                {tags.slice(0, 3).map((tag: string, idx: number) => (
+                  <span key={idx} className="bg-[#f99c00] text-gray-900 px-3 py-1.5 rounded-sm text-[11px] font-black tracking-wider uppercase">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
-            <span className="flex items-center gap-1.5 text-sm text-gray-500">
-              <Calendar className="w-4 h-4" />
-              {formattedDate}
-            </span>
+            
+            <div className="flex items-center gap-4 text-sm font-bold text-gray-500">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-[#f99c00]" />
+                {formattedDate}
+              </span>
+              {article.readingTime && (
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-[#f99c00]" />
+                  {article.readingTime}
+                </span>
+              )}
+            </div>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-tight">
             {article.title}
           </h1>
         </div>
 
         {article.image && (
-          <div className="max-w-5xl mx-auto px-6 mb-12">
-            <figure className="relative w-full aspect-[2560/1695] rounded-2xl overflow-hidden bg-[#F8F9FA] shadow-sm">
+          <div className="max-w-5xl mx-auto px-6 mb-12 relative group">
+            <div className="absolute top-[-2px] left-4 w-4 h-4 border-t-[3px] border-l-[3px] border-[#f99c00] z-20" />
+            <div className="absolute top-[-2px] right-4 w-4 h-4 border-t-[3px] border-r-[3px] border-[#f99c00] z-20" />
+            <div className="absolute bottom-[-2px] left-4 w-4 h-4 border-b-[3px] border-l-[3px] border-[#f99c00] z-20" />
+            <div className="absolute bottom-[-2px] right-4 w-4 h-4 border-b-[3px] border-r-[3px] border-[#f99c00] z-20" />
+
+            <figure className="relative w-full aspect-[21/9] rounded-sm overflow-hidden bg-[#1C2331] shadow-md z-10">
               <Image
                 src={article.image}
                 alt={article.seo?.imageAlt || article.title}
-                title={article.seo?.imageTitle}
                 fill
-                className="object-cover" 
+                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                 priority
               />
             </figure>
@@ -124,26 +121,20 @@ export default async function BlogPostPage({ params }: PageProps) {
         <article className="max-w-4xl mx-auto px-6">
           {article.content && (
             <div 
-              className="prose prose-lg max-w-none text-gray-800 prose-headings:font-bold prose-headings:text-gray-900 prose-a:text-[#2563EB]"
+              className="prose prose-lg max-w-none text-gray-700 prose-headings:font-extrabold prose-headings:text-gray-900 prose-a:text-[#f99c00] prose-a:no-underline hover:prose-a:underline prose-img:rounded-sm"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           )}
 
-          <div className="mt-20 bg-[#F4F7FB] rounded-3xl p-10 md:p-14 text-center">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              Нужна консультация?
-            </h3>
-            <p className="text-gray-600 mb-8 text-base md:text-lg">
-              Найдите квалифицированного врача в вашем городе
-            </p>
-            <Link 
-              href="/search" 
-              className="inline-block bg-[#2563EB] text-white px-10 py-4 rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-sm"
-            >
-              Выбрать врача
-            </Link>
+          <div className="mt-20 bg-[#1C2331] rounded-sm p-10 md:p-14 text-center relative overflow-hidden">
+            <div className="relative z-10">
+              <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-4">Нужна консультация специалиста?</h3>
+              <p className="text-gray-400 mb-8 max-w-2xl mx-auto">Оставьте заявку, и мы свяжемся с вами.</p>
+              <Link href="/#contact" className="inline-block bg-[#f99c00] text-gray-900 px-10 py-4 rounded-sm font-bold hover:bg-[#e08c00] transition-colors">
+                Оставить заявку
+              </Link>
+            </div>
           </div>
-
         </article>
       </main>
     </>

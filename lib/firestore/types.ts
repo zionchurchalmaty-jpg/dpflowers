@@ -1,4 +1,4 @@
-export type ContentType = "blog" | "cases" | "doctors" | "promos";
+export type ContentType = "content" | "projects" | "leads";
 export type ContentStatus = "draft" | "published";
 
 export interface LocalizedText {
@@ -6,12 +6,12 @@ export interface LocalizedText {
   kz: string;
 }
 
-export interface DoctorEducationGroup {
+export interface ServiceApprovalGroup {
   title: LocalizedText;
   items: LocalizedText[];
 }
 
-export interface DoctorLocation {
+export interface ServiceLocation {
   cityId: string;
   address: LocalizedText;
   phone: string;
@@ -19,7 +19,7 @@ export interface DoctorLocation {
   link2gis: string;
 }
 
-export interface DoctorCase {
+export interface ProjectCase {
   title: LocalizedText;
   duration: LocalizedText;
   price: string;
@@ -28,19 +28,19 @@ export interface DoctorCase {
   description: LocalizedText;
 }
 
-export interface DoctorCertificate {
+export interface ServiceCertificate {
   url?: string;
   name?: string;
 }
 
-export interface DoctorReview {
+export interface ServiceReview {
   authorName: LocalizedText;
   text: LocalizedText;
   rating: number;
   date: string;
 }
 
-export interface DoctorFAQ {
+export interface ServiceFAQ {
   question: LocalizedText;
   answer: LocalizedText;
 }
@@ -55,50 +55,6 @@ export interface SEOData {
   imageAlt?: string;
   imageTitle?: string;
   imageDescription?: string;
-}
-
-export interface DoctorPrice {
-  serviceName: LocalizedText;
-  price: number;
-}
-
-export interface DoctorProfile {
-  id: string;
-  slug?: string;
-  contentType: "doctors";
-  status: ContentStatus;
-  seo?: SEOData;
-  date?: { toDate: () => Date } | string | null;
-  createdAt?: { toDate: () => Date } | string | null;
-  updatedAt?: { toDate: () => Date } | string | null;
-
-  photo: string;
-  name: LocalizedText;
-  specialty: LocalizedText;
-  shortDescription?: LocalizedText;
-  experienceYears: number;
-  categoryId?: string;
-  views?: number;
-  
-  reasons: LocalizedText[]; 
-  services: LocalizedText[];
-  equipment: LocalizedText[];
-  
-  videoUrl?: string;
-  education: DoctorEducationGroup[];
-  certificates: DoctorCertificate[];
-  cases: DoctorCase[];
-  reviews: DoctorReview[];
-  prices: DoctorPrice[];
-  faq: DoctorFAQ[];
-  location: DoctorLocation;
-}
-
-export interface DoctorCategory {
-  id: string;
-  title: LocalizedText;
-  description?: LocalizedText;
-  basePrice?: number;
 }
 
 export interface Content {
@@ -121,8 +77,8 @@ export interface Content {
   password?: string;
   previewContent?: string;
   isSeo?: boolean;
-  doctorId?: string;
-  doctorSlug?: string;
+  serviceId?: string;
+  readingTime?: string;
 }
 
 export interface ContentInput extends Partial<Content> {
@@ -130,8 +86,8 @@ export interface ContentInput extends Partial<Content> {
   title: string;
   status: ContentStatus;
   isSeo?: boolean;
-  doctorId?: string;
-  doctorSlug?: string;
+  serviceId?: string;
+  serviceSlug?: string;
 }
 
 export interface SerializedContent extends Omit<
