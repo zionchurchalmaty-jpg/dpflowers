@@ -8,7 +8,7 @@ import ConditionalFooter from "@/components/ConditionalFooter";
 import ConditionalFloatingButtons from "@/components/ConditionalFloatingButtons";
 
 export const metadata: Metadata = {
-  title: "VT STROY — Строительно-монтажные работы",
+  title: "DPFlowers — Цветы, которые говорят за вас",
   description: "Строительно-монтажные работы в Алматы",
   verification: {
     google: "sPWPq5RZVhBI_GbdjDrqMD6rDkNG9sJzVkUCpSyLoX0", 
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
-        <Script id="google-tag-manager" strategy="afterInteractive">
+        {/* <Script id="google-tag-manager" strategy="afterInteractive">
           {`
             (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
             new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -36,9 +36,9 @@ export default function RootLayout({
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','GTM-MSDPN4NF');
           `}
-        </Script>
+        </Script> */}
 
-        <Script id="microsoft-clarity" strategy="afterInteractive">
+        {/* <Script id="microsoft-clarity" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
                 c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -46,7 +46,7 @@ export default function RootLayout({
                 y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window, document, "clarity", "script", "x4xej6mo4g");
           `}
-        </Script>
+        </Script> */}
       </head>
 
       <body

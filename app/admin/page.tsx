@@ -1,43 +1,30 @@
-import React from "react";
 import Link from "next/link";
-import { 
-  getDashboardStatsAdmin, 
-  getAdminContentAdmin, 
-  getLeadsAdmin
-} from "@/lib/firestore/admin-content";
+import { getDashboardStatsAdmin, getLeadsAdmin } from "@/lib/firestore/admin-content";
 import { StatCard } from "@/components/admin/stat-card";
-import { FileText, FolderOpen } from "lucide-react";
-import { LeadsList } from "@/components/admin/lead-list";
+import { Flower2, Layers } from "lucide-react";
 
-export const metadata = { title: "Обзор | Админ-панель VT STROY" };
+export const metadata = { title: "Обзор | DPFlowers Admin" };
 
 export default async function AdminDashboardPage() {
-  const stats = await getDashboardStatsAdmin();
-  const projectsRaw = await getAdminContentAdmin("projects");
+  const stats = await getDashboardStatsAdmin(); 
   const leads = await getLeadsAdmin(5);
 
-  const projects = projectsRaw as any[];
-
   return (
-    <div className="space-y-8 p-6 md:p-8 bg-[#F8F9FA] min-h-screen">
+    <div className="space-y-8 p-6 md:p-8 min-h-screen font-sans">
+      <h1 className="text-2xl font-semibold text-stone-800">Обзор магазина</h1>
       
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Обзор</h1>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/admin/projects" className="block group">
-          <StatCard title="Портфолио (Объекты)" value={stats.projectsCount} icon={FolderOpen} />
+        <Link href="/admin/products" className="block group">
+          <StatCard title="Товары (Букеты)" value={stats.productsCount || 0} icon={Flower2} />
         </Link>
-        <Link href="/admin/content" className="block group">
-          <StatCard title="Записи (Блог / SEO)" value={stats.contentCount} icon={FileText} />
+        <Link href="/admin/sections" className="block group">
+          <StatCard title="Активные секции" value={stats.sectionsCount || 0} icon={Layers} />
         </Link>
-      </div>
-      <div className="max-w-2xl">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Последние заявки</h2>
-        <LeadsList leads={leads} />
       </div>
 
+      <div className="max-w-3xl">
+        {/* <h2 className="text-lg font-semibold text-stone-800 mb-4">Новые заявки и заказы</h2> */}
+      </div>
     </div>
   );
 }

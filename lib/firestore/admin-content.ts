@@ -1,5 +1,5 @@
 import { adminDb } from "@/lib/firebase-admin";
-import type { ContentType, Content } from "./types";
+import type { ContentType } from "./types";
 import { getCollection, serializeFirebaseData } from "./client-content";
 
 export async function getTopProjectsIdsAdmin(): Promise<string[]> {
@@ -19,7 +19,7 @@ export async function updateTopProjectsIdsAdmin(
 export async function getPublishedContentAdmin(
   type: ContentType,
   limitCount?: number,
-): Promise<Content[]> {
+): Promise<any[]> {
   const collName = getCollection(type);
   let ref: any = adminDb!
     .collection(collName)
@@ -33,14 +33,14 @@ export async function getPublishedContentAdmin(
     contentType: type,
     ...d.data(),
   }));
-  return serializeFirebaseData(rawData) as Content[];
+  return serializeFirebaseData(rawData) as any[];
 }
 
 export async function getContentByIdAdmin(
   id: string,
   type: ContentType,
   includeDrafts: boolean = false,
-): Promise<Content | null> {
+): Promise<any | null> {
   if (!id || typeof id !== "string") return null;
   const collName = getCollection(type);
   const docSnap = await adminDb!.collection(collName).doc(id).get();
@@ -50,14 +50,14 @@ export async function getContentByIdAdmin(
   if (!includeDrafts && data.status === "draft") return null;
 
   const rawData = { id: docSnap.id, contentType: type, ...data };
-  return serializeFirebaseData(rawData) as Content;
+  return serializeFirebaseData(rawData) as any;
 }
 
 export async function getContentBySlugAdmin(
   slug: string,
   type: ContentType,
   includeDrafts: boolean = false,
-): Promise<Content | null> {
+): Promise<any | null> {
   if (!slug || typeof slug !== "string") return null;
   const collName = getCollection(type);
 
@@ -69,12 +69,12 @@ export async function getContentBySlugAdmin(
 
   const docSnap = snapshot.docs[0];
   const rawData = { id: docSnap.id, contentType: type, ...docSnap.data() };
-  return serializeFirebaseData(rawData) as Content;
+  return serializeFirebaseData(rawData) as any;
 }
 
 export async function getAdminContentAdmin(
   type: ContentType,
-): Promise<Content[]> {
+): Promise<any[]> {
   const collName = getCollection(type);
   const snapshot = await adminDb!
     .collection(collName)
@@ -85,7 +85,7 @@ export async function getAdminContentAdmin(
     contentType: type,
     ...d.data(),
   }));
-  return serializeFirebaseData(rawData) as Content[];
+  return serializeFirebaseData(rawData) as any[];
 }
 
 export async function getLeadsAdmin(limitCount: number = 5) {
@@ -100,12 +100,12 @@ export async function getLeadsAdmin(limitCount: number = 5) {
 }
 
 export async function getDashboardStatsAdmin() {
-  const [contentSnap, projectsSnap] = await Promise.all([
-    adminDb!.collection("content").count().get(),
-    adminDb!.collection("projects").count().get(),
+  const [sectionsSnap, productsSnap] = await Promise.all([
+    adminDb!.collection("sections").count().get(),
+    adminDb!.collection("products").count().get(),
   ]);
   return {
-    contentCount: contentSnap.data().count,
-    projectsCount: projectsSnap.data().count,
+    sectionsCount: sectionsSnap.data().count,
+    productsCount: productsSnap.data().count,
   };
 }

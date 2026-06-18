@@ -1,80 +1,111 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, Phone } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShoppingBag, Menu, X, Search } from "lucide-react";
+import { useState } from "react";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsOpen(false);
+    }
+  };
 
   return (
-    <header className="w-full fixed top-0 z-50 flex flex-col">
-      <div 
-        className={`bg-[#1C2331] text-gray-300 px-6 hidden md:block overflow-hidden transition-all duration-100 ease-in-out ${
-          isScrolled ? "max-h-0 py-0 opacity-0" : "max-h-12 py-2.5 opacity-100"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto flex justify-between items-center text-[13px] tracking-wide">
-          <a href="mailto:info@vtstroy.kz" className="flex items-center gap-2 hover:text-white transition-colors">
-            <Mail className="w-3.5 h-3.5 text-[#f99c00]" /> info@vtstroy.kz
+    <nav className="fixed w-full z-50 bg-[#FCF9F5]/95 backdrop-blur-md border-b border-stone-200/50 font-sans transition-all">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        
+        <Link href="/" className="shrink-0">
+          <span className="text-[#1A3326] font-serif font-bold text-2xl tracking-widest uppercase">
+            DPFLOWERS
+          </span>
+        </Link>
+
+        <div className="hidden md:flex items-center justify-center flex-1 gap-10">
+          <Link href="/#categories" className="text-xs font-semibold uppercase tracking-widest text-stone-500 hover:text-[#1A3326] transition-colors">
+            Категории
+          </Link>
+          <Link href="/#catalog" className="text-xs font-semibold uppercase tracking-widest text-stone-500 hover:text-[#1A3326] transition-colors">
+            Витрина
+          </Link>
+        </div>
+
+        <div className="hidden md:flex items-center gap-6 shrink-0">
+          
+          <form onSubmit={handleSearch} className="relative group flex items-center">
+            <input
+              type="text"
+              placeholder="Поиск..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-32 focus:w-48 bg-transparent border-b border-stone-300 py-1.5 pl-1 pr-7 text-sm focus:outline-none focus:border-[#1A3326] transition-all placeholder:text-stone-400 font-light"
+            />
+            <button type="submit" className="absolute right-0 text-stone-400 group-hover:text-[#1A3326] transition-colors">
+              <Search className="w-4 h-4" />
+            </button>
+          </form>
+
+          <a 
+            href="https://wa.me/77776862385" 
+            target="_blank" 
+            rel="noreferrer" 
+            className="bg-[#1A3326] hover:bg-[#234433] text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2 shadow-sm hover:shadow-md"
+          >
+            <ShoppingBag className="w-4 h-4 text-[#D4AF37]" />
+            Сделать заказ
           </a>
-          <div className="flex gap-8">
-            <a href="tel:+77776862385" className="flex items-center gap-2 hover:text-white transition-colors">
-              <Phone className="w-3.5 h-3.5 text-[#f99c00]" /> +7 (777) 686-23-85
-            </a>
-            <a href="tel:+77776862385" className="flex items-center gap-2 hover:text-white transition-colors">
-              <Phone className="w-3.5 h-3.5 text-[#f99c00]" /> +7 (777) 686-23-85
-            </a>
-          </div>
         </div>
+
+        <button 
+          className="md:hidden text-[#1A3326] p-2" 
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
-      <div 
-        className={`bg-white transition-all duration-100 border-[#f99c00] ${
-          isScrolled ? "border-b-2 shadow-md" : "border-b-[4px] shadow-sm"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-6 h-[100px] flex justify-between items-center">
-          
-          <div className="flex-1 flex justify-start">
-            <Link href="/" className="flex items-center shrink-0">
-              <img 
-                src="/logo.jpg" 
-                alt="VT STROY Logo" 
-                className="h-20 w-auto object-contain" 
-              />
+      {isOpen && (
+        <div className="md:hidden bg-[#FCF9F5] border-b border-stone-200 px-6 py-6 flex flex-col gap-6 shadow-xl">
+          <form onSubmit={handleSearch} className="relative w-full">
+            <input
+              type="text"
+              placeholder="Поиск букета..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-white border border-stone-200 rounded-full py-3 pl-5 pr-12 text-base focus:outline-none focus:border-[#1A3326]"
+            />
+            <button type="submit" className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400">
+              <Search className="w-5 h-5" />
+            </button>
+          </form>
+
+          <nav className="flex flex-col gap-4">
+            <Link href="/#categories" onClick={() => setIsOpen(false)} className="text-sm font-semibold uppercase tracking-widest text-stone-600">
+              Категории
             </Link>
-          </div>
-
-          <nav className="hidden lg:flex items-center gap-10 relative px-8 py-3.5 shrink-0">
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-[2px] border-l-[2px] border-[#f99c00]" />
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-[2px] border-r-[2px] border-[#f99c00]" />
-            
-            <Link href="/" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Главная</Link>
-            <Link href="/#services" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Услуги</Link>
-            <Link href="/#contact" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Контакты</Link>
-            <Link href="/blog" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Блог</Link>
-            <Link href="/projects" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Наши работы</Link>
-            <Link href="/#contact" className="text-[15px] font-medium text-gray-700 hover:text-[#f99c00] transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-[#f99c00] after:transition-all after:duration-300 hover:after:w-full">Контакты</Link>
+            <Link href="/#catalog" onClick={() => setIsOpen(false)} className="text-sm font-semibold uppercase tracking-widest text-stone-600">
+              Витрина
+            </Link>
           </nav>
-
-          <div className="flex-1 flex justify-end">
-            <a href="#contact" className="hidden md:flex bg-[#f99c00] hover:bg-[#e08c00] text-gray-900 font-bold text-sm px-6 py-2.5 rounded-md transition-colors">
-              Консультация
-            </a>
-          </div>
           
+          <a 
+            href="https://wa.me/77776862385" 
+            target="_blank" 
+            rel="noreferrer" 
+            className="bg-[#1A3326] text-white px-6 py-4 rounded-full text-center text-sm font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 mt-2"
+          >
+            <ShoppingBag className="w-5 h-5 text-[#D4AF37]" />
+            Сделать заказ
+          </a>
         </div>
-      </div>
-    </header>
+      )}
+    </nav>
   );
 }

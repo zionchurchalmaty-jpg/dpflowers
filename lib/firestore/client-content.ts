@@ -15,7 +15,7 @@ import {
   getCountFromServer,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { ContentType, Content } from "./types";
+import type { ContentType } from "./types";
 import slugify from "slugify";
 
 export async function markLeadAsRead(leadId: string) {
@@ -24,26 +24,23 @@ export async function markLeadAsRead(leadId: string) {
 }
 
 export const COLLECTION_MAP: Record<ContentType, string> = {
-  content: "content",
-  projects: "projects",
+  sections: "sections",
+  products: "products",
   leads: "leads",
-  testimonials: "testimonials",
 };
 
 export const PLACEHOLDERS: Record<ContentType, string> = {
-  content: "/images/content-placeholder.png",
-  projects: "/images/project-placeholder.png",
-  leads: "/images/project-placeholder.png",
-  testimonials: "/images/placeholder.png",
+  sections: "/images/section-placeholder.png",
+  products: "/images/product-placeholder.png",
+  leads: "/images/placeholder.png",
 };
 
 export function getCollection(type: ContentType): string {
   switch (type) {
-    case "content": return "content";
-    case "projects": return "projects";
+    case "sections": return "sections";
+    case "products": return "products";
     case "leads": return "leads";
-    case "testimonials": return "testimonials";
-    default: return "content";
+    default: return "products";
   }
 }
 
@@ -52,7 +49,7 @@ export function generateSlug(title: string): string {
 }
 
 export function getPlaceholder(type: ContentType, isSeo?: boolean): string {
-  if (type === "content" && isSeo) return "/images/seo-placeholder.png";
+  if (type === "sections" && isSeo) return "/images/placeholder.png";
   return PLACEHOLDERS[type] || "/images/placeholder.png";
 }
 
@@ -200,7 +197,7 @@ export async function deleteContent(
     }
   }
 
-  for (const c of ["content", "projects"]) {
+  for (const c of ["products", "sections"]) {
     const ref = doc(db, c, id);
     if ((await getDoc(ref)).exists()) {
       await deleteDoc(ref);
@@ -213,7 +210,7 @@ export async function deleteContent(
 export async function getPublishedContent(
   type: ContentType,
   limitCount?: number,
-): Promise<Content[]> {
+): Promise<any[]> {
   const collName = getCollection(type);
   let q = query(
     collection(db, collName),
@@ -227,14 +224,14 @@ export async function getPublishedContent(
     contentType: type,
     ...d.data(),
   }));
-  return serializeFirebaseData(rawData) as Content[];
+  return serializeFirebaseData(rawData) as any[];
 }
 
 export async function getContentById(
   id: string,
   type: ContentType,
   includeDrafts: boolean = false,
-): Promise<Content | null> {
+): Promise<any | null> {
   if (!id || typeof id !== "string") return null;
   const collName = getCollection(type);
   const snap = await getDoc(doc(db, collName, id));
@@ -242,14 +239,14 @@ export async function getContentById(
   const data = snap.data();
   if (!includeDrafts && data.status === "draft") return null;
   const rawData = { id: snap.id, contentType: type, ...data };
-  return serializeFirebaseData(rawData) as Content;
+  return serializeFirebaseData(rawData) as any;
 }
 
 export async function getContentBySlug(
   slug: string,
   type: ContentType,
   includeDrafts: boolean = false,
-): Promise<Content | null> {
+): Promise<any | null> {
   if (!slug || typeof slug !== "string") return null;
   const collName = getCollection(type);
   let q = query(collection(db, collName), where("slug", "==", slug));
@@ -259,10 +256,10 @@ export async function getContentBySlug(
   if (snapshot.empty) return null;
   const docSnap = snapshot.docs[0];
   const rawData = { id: docSnap.id, contentType: type, ...docSnap.data() };
-  return serializeFirebaseData(rawData) as Content;
+  return serializeFirebaseData(rawData) as any;
 }
 
-export async function getAdminContent(type: ContentType): Promise<Content[]> {
+export async function getAdminContent(type: ContentType): Promise<any[]> {
   const collName = getCollection(type);
   const q = query(collection(db, collName), orderBy("date", "desc"));
   const snapshot = await getDocs(q);
@@ -271,16 +268,16 @@ export async function getAdminContent(type: ContentType): Promise<Content[]> {
     contentType: type,
     ...d.data(),
   }));
-  return serializeFirebaseData(rawData) as Content[];
+  return serializeFirebaseData(rawData) as any[];
 }
 
 export async function getDashboardStats() {
-  const [contentSnap, projectsSnap] = await Promise.all([
-    getCountFromServer(collection(db, "content")),
-    getCountFromServer(collection(db, "projects")),
+  const [sectionsSnap, productsSnap] = await Promise.all([
+    getCountFromServer(collection(db, "sections")),
+    getCountFromServer(collection(db, "products")),
   ]);
   return {
-    contentCount: contentSnap.data().count,
-    projectsCount: projectsSnap.data().count,
+    sectionsCount: sectionsSnap.data().count,
+    productsCount: productsSnap.data().count,
   };
 }

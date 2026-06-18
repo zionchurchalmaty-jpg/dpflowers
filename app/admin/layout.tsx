@@ -3,7 +3,7 @@ import { AuthProvider } from "@/components/admin/auth-provider";
 import { AdminGate } from "@/components/admin/admin-gate";
 
 export const metadata: Metadata = {
-  title: "VT Stroy | Admin Panel",
+  title: "DPFlowers | Admin Panel",
   robots: "noindex, nofollow",
 };
 
@@ -16,7 +16,9 @@ export default function AdminLayout({
 }) {
   return (
     <AuthProvider>
-      <AdminGate>{children}</AdminGate>
+      <AdminGate>
+        {children}
+      </AdminGate>
     </AuthProvider>
   );
 }

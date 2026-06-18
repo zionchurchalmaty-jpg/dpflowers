@@ -52,8 +52,7 @@ export function AdminGate({ children }: { children: React.ReactNode }) {
     /* Render admin layout for authorized users */
   }
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
-      <AdminSidebar />
+<div className="fixed inset-0 z-[100] flex bg-[#FCF9F5] overflow-hidden font-sans">      <AdminSidebar />
       <main className="min-h-screen pt-16 lg:pt-0 lg:pl-64 w-full">
         <div className="p-4 md:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
