@@ -1,7 +1,7 @@
 import { getPublishedContent } from "@/lib/firestore/client-content";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingBag, ArrowRight, Flower2 } from "lucide-react";
+import { MessageCircle, ArrowRight, Flower2 } from "lucide-react";
 
 export default async function FlowerShopHomePage() {
   const allSections = await getPublishedContent("sections", 100);
@@ -135,7 +135,7 @@ export default async function FlowerShopHomePage() {
                             className="bg-[#1A3326] hover:bg-[#234433] text-white p-3 rounded-full transition-colors flex items-center justify-center shadow-sm"
                             title="Заказать в WhatsApp"
                           >
-                            <ShoppingBag className="w-4 h-4 text-[#D4AF37]" />
+                            <MessageCircle className="w-4 h-4 text-[#D4AF37]" />
                           </a>
                         </div>
                       </div>

@@ -38,8 +38,10 @@ export default function Footer() {
               <nav className="flex flex-col space-y-4 text-sm font-light">
                 <Link href="/" className="hover:text-[#EFA7A7] transition-colors">Главная витрина</Link>
                 <Link href="/#catalog" className="hover:text-[#EFA7A7] transition-colors">Все букеты</Link>
-                <Link href="/#delivery" className="hover:text-[#EFA7A7] transition-colors">Условия доставки</Link>
-                <Link href="/#about" className="hover:text-[#EFA7A7] transition-colors">О студии</Link>
+                <Link href="/blog" className="hover:text-[#EFA7A7] transition-colors">Блог</Link>
+                <Link href="/seo-blog" className="hover:text-[#EFA7A7] transition-colors">SEO-статьи</Link>
+                {/* <Link href="/#delivery" className="hover:text-[#EFA7A7] transition-colors">Условия доставки</Link>
+                <Link href="/#about" className="hover:text-[#EFA7A7] transition-colors">О студии</Link> */}
               </nav>
             </div>
 

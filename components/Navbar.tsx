@@ -93,6 +93,9 @@ export default function Navbar() {
             <Link href="/#catalog" onClick={() => setIsOpen(false)} className="text-sm font-semibold uppercase tracking-widest text-stone-600">
               Витрина
             </Link>
+            <Link href="/blog" onClick={() => setIsOpen(false)} className="text-sm font-semibold uppercase tracking-widest text-stone-600">
+              Блог
+            </Link>
           </nav>
           
           <a 

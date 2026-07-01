@@ -27,12 +27,14 @@ export const COLLECTION_MAP: Record<ContentType, string> = {
   sections: "sections",
   products: "products",
   leads: "leads",
+  blog: "blog",
 };
 
 export const PLACEHOLDERS: Record<ContentType, string> = {
   sections: "/images/section-placeholder.png",
   products: "/images/product-placeholder.png",
   leads: "/images/placeholder.png",
+  blog: "/images/blog-placeholder.png",
 };
 
 export function getCollection(type: ContentType): string {
@@ -40,6 +42,7 @@ export function getCollection(type: ContentType): string {
     case "sections": return "sections";
     case "products": return "products";
     case "leads": return "leads";
+    case "blog": return "blog";
     default: return "products";
   }
 }
@@ -197,7 +200,7 @@ export async function deleteContent(
     }
   }
 
-  for (const c of ["products", "sections"]) {
+  for (const c of ["products", "sections", "blog"]) {
     const ref = doc(db, c, id);
     if ((await getDoc(ref)).exists()) {
       await deleteDoc(ref);
@@ -272,12 +275,14 @@ export async function getAdminContent(type: ContentType): Promise<any[]> {
 }
 
 export async function getDashboardStats() {
-  const [sectionsSnap, productsSnap] = await Promise.all([
+  const [sectionsSnap, productsSnap, blogSnap] = await Promise.all([
     getCountFromServer(collection(db, "sections")),
     getCountFromServer(collection(db, "products")),
+    getCountFromServer(collection(db, "blog")),
   ]);
   return {
     sectionsCount: sectionsSnap.data().count,
     productsCount: productsSnap.data().count,
+    blogCount: blogSnap.data().count,
   };
 }

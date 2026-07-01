@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Flower2, Layers, LogOut } from "lucide-react";
+import { LayoutDashboard, Flower2, Layers, LogOut, Scroll } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/admin", icon: LayoutDashboard, label: "Дашборд" },
   { href: "/admin/products", icon: Flower2, label: "Товары" },
   { href: "/admin/sections", icon: Layers, label: "Секции витрины" },
+  { href: "/admin/blog", icon: Scroll, label: "Статьи" },
 ];
 
 export function AdminSidebar() {

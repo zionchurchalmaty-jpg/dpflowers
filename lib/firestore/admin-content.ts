@@ -100,12 +100,14 @@ export async function getLeadsAdmin(limitCount: number = 5) {
 }
 
 export async function getDashboardStatsAdmin() {
-  const [sectionsSnap, productsSnap] = await Promise.all([
+  const [sectionsSnap, productsSnap, blogSnap] = await Promise.all([
     adminDb!.collection("sections").count().get(),
     adminDb!.collection("products").count().get(),
+    adminDb!.collection("blog").count().get(),
   ]);
   return {
     sectionsCount: sectionsSnap.data().count,
     productsCount: productsSnap.data().count,
+    blogCount: blogSnap.data().count,
   };
 }
