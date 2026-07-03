@@ -1,4 +1,17 @@
-export type ContentType = "products" | "sections" | "leads" | "blog";
+export type ContentType = "products" | "sections" | "leads" | "blog" | "cases";
+export type ContentStatus = "published" | "draft";
+
+export interface SEOData {
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+  noIndex?: boolean;
+  imageAlt?: string;
+  imageTitle?: string;
+  imageDescription?: string;
+  schemaMarkup?: string;
+}
 
 export interface Section {
   id: string;
@@ -6,7 +19,7 @@ export interface Section {
   slug: string;
   isHomeDisplayed: boolean;
   order: number;
-  status: "published" | "draft";
+  status: ContentStatus;
   createdAt: any;
 }
 
@@ -19,7 +32,7 @@ export interface Product {
   sectionId: string;
   image: string;
   tags: string[];
-  status: "published" | "draft";
+  status: ContentStatus;
   createdAt: any;
 }
 
@@ -33,9 +46,48 @@ export interface Article {
   category?: string | string[];
   tags?: string[];
   isSeo: boolean;
-  status: "published" | "draft";
-  seo?: any;
+  status: ContentStatus;
+  seo?: SEOData;
   date: any;
   createdAt: any;
   updatedAt: any;
+}
+
+export interface ContentInput {
+  contentType: ContentType;
+  title: string;
+  content?: string;
+  excerpt?: string;
+  image?: string;
+  tags?: string[];
+  status: ContentStatus;
+  seo?: SEOData;
+  isSeo?: boolean;
+  [key: string]: any;
+}
+
+export interface Content {
+  id: string;
+  contentType: ContentType;
+  title?: string;
+  slug?: string;
+  status?: ContentStatus;
+  isSeo?: boolean;
+  date?: any;
+  createdAt?: any;
+  updatedAt?: any;
+  [key: string]: any;
+}
+
+export interface SerializedContent {
+  id: string;
+  contentType: ContentType;
+  title?: string;
+  slug?: string;
+  status?: ContentStatus;
+  isSeo?: boolean;
+  date: string | null;
+  createdAt: string | null;
+  updatedAt: string | null;
+  [key: string]: any;
 }

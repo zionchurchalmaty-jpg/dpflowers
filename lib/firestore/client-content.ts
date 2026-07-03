@@ -28,6 +28,7 @@ export const COLLECTION_MAP: Record<ContentType, string> = {
   products: "products",
   leads: "leads",
   blog: "blog",
+  cases: "cases", // <-- Добавили
 };
 
 export const PLACEHOLDERS: Record<ContentType, string> = {
@@ -35,6 +36,7 @@ export const PLACEHOLDERS: Record<ContentType, string> = {
   products: "/images/product-placeholder.png",
   leads: "/images/placeholder.png",
   blog: "/images/blog-placeholder.png",
+  cases: "/images/placeholder.png", // <-- Добавили (можешь заменить на свою картинку)
 };
 
 export function getCollection(type: ContentType): string {
@@ -43,10 +45,10 @@ export function getCollection(type: ContentType): string {
     case "products": return "products";
     case "leads": return "leads";
     case "blog": return "blog";
+    case "cases": return "cases"; // <-- Добавили
     default: return "products";
   }
 }
-
 export function generateSlug(title: string): string {
   return slugify(title, { lower: true, strict: true, locale: "ru" });
 }

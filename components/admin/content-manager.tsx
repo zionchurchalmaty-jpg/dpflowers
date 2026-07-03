@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { deleteContent } from "@/lib/firestore/client-content";
 import { ContentType } from "@/lib/firestore/types";
+import { ContentList } from "./content-list";
 
 interface ContentManagerProps {
   initialItems: any[];
@@ -34,7 +35,7 @@ export function ContentManager({
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 p-6 md:p-8">
+    <div className="max-w-6xl mx-auto space-y-6">
       
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -51,6 +52,11 @@ export function ContentManager({
         </Link>
       </div>
 
+      <ContentList 
+        items={items} 
+        contentType={contentType} 
+        onDelete={handleDelete} 
+      />
 
     </div>
   );

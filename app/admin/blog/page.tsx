@@ -7,17 +7,17 @@ export default async function AdminBlogPage() {
 
   const formattedArticles: SerializedContent[] = articles.map(a => ({
     ...a,
-    date: a.date?.toDate ? a.date.toDate().toISOString() : null,
-    createdAt: a.createdAt?.toDate ? a.createdAt.toDate().toISOString() : null,
-    updatedAt: a.updatedAt?.toDate ? a.updatedAt.toDate().toISOString() : null,
+    date: a.date?.toDate ? a.date.toDate().toISOString() : (a.date || null),
+    createdAt: a.createdAt?.toDate ? a.createdAt.toDate().toISOString() : (a.createdAt || null),
+    updatedAt: a.updatedAt?.toDate ? a.updatedAt.toDate().toISOString() : (a.updatedAt || null),
   }));
 
   return (
-    <div className="min-h-screen text-[#202124] font-sans p-6 md:p-10">
+    <div className="min-h-screen bg-[#FCF9F5] text-stone-800 font-sans p-6 md:p-10">
       <ContentManager 
         initialItems={formattedArticles} 
         contentType="blog" 
-        title="Управление статьями"
+        title="Управление статьями блога"
         createLink="/admin/blog/new"
       />
     </div>

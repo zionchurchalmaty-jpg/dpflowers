@@ -48,7 +48,6 @@ export default async function SeoBlogPage() {
   return (
     <div className="min-h-screen bg-[#FCF9F5]">
       
-      {/* НОВАЯ ШАПКА БЛОГА ВМЕСТО <Hero /> */}
       <section className="bg-[#1A3326] text-white pt-32 pb-20 md:pt-40 md:pb-24 text-center px-6">
         <div className="max-w-4xl mx-auto space-y-6">
           <span className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase block">
@@ -61,7 +60,6 @@ export default async function SeoBlogPage() {
             Интересные факты о цветах, советы по выбору букетов к любому поводу и правила правильного ухода.
           </p>
           
-          {/* Вывод уникальных категорий/тегов */}
           {uniqueCategories.length > 0 && (
             <div className="flex flex-wrap justify-center gap-3 pt-6">
               {uniqueCategories.map(tag => (

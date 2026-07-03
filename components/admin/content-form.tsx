@@ -6,13 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ContentEditor } from "./content-editor";
 import { SEOFields } from "./seo-fields";
 import { ImageUpload } from "./image-upload";
@@ -186,7 +179,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-navy">
+        <h1 className="text-2xl font-semibold text-stone-900">
           {isEditing
             ? `Редактирование: ${contentTypeLabel}`
             : `Создание: ${contentTypeLabel}`}
@@ -196,7 +189,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
           {isEditing && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10">
+                <Button variant="outline" size="sm" className="text-red-500 hover:bg-red-50 border-red-200 hover:text-red-600">
                   <Trash2 className="mr-2 h-4 w-4" /> Удалить
                 </Button>
               </AlertDialogTrigger>
@@ -207,7 +200,7 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Отмена</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+                  <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">
                     {deleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Удалить
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -215,62 +208,60 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
             </AlertDialog>
           )}
 
-          <Button size="sm" onClick={() => handleSubmit()} disabled={saving || imageUploading} className="bg-[#1A3326] text-white">
+          <Button size="sm" onClick={() => handleSubmit()} disabled={saving || imageUploading} className="bg-[#1A3326] text-white hover:bg-[#234433]">
             {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />} Сохранить
           </Button>
         </div>
       </div>
 
-      {error && <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">{error}</div>}
+      {error && <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600 border border-red-100">{error}</div>}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <div className="space-y-2">
-            <Label htmlFor="title">Заголовок</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Введите заголовок..." className="text-lg" />
+            <Label htmlFor="title" className="text-stone-700">Заголовок</Label>
+            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Введите заголовок..." className="text-lg focus-visible:ring-[#1A3326]" />
           </div>
 
           <div className="space-y-2">
-            <Label>Содержимое</Label>
+            <Label className="text-stone-700">Содержимое</Label>
             <ContentEditor content={content} onChange={setContent} placeholder="Напишите основной текст здесь..." />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="excerpt">Краткое описание (для списка статей)</Label>
-            <Textarea id="excerpt" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Краткое содержание для карточки превью..." rows={3} />
+            <Label htmlFor="excerpt" className="text-stone-700">Краткое описание (для списка статей)</Label>
+            <Textarea id="excerpt" value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="Краткое содержание для карточки превью..." rows={3} className="focus-visible:ring-[#1A3326]" />
           </div>
         </div>
 
         <div className="space-y-6">
-<div className="space-y-2">
-  <Label>Размещение статьи</Label>
-  <Select
-    value={isSeo ? "seo" : "blog"}
-    onValueChange={(v) => setIsSeo(v === "seo")}
-  >
-    <SelectTrigger>
-      <SelectValue />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="blog">В блоге</SelectItem>
-      <SelectItem value="seo">SEO-статья</SelectItem>
-    </SelectContent>
-  </Select>
-</div>
+          
+          <div className="space-y-2">
+            <Label className="text-stone-700">Размещение статьи</Label>
+            <select
+              value={isSeo ? "seo" : "blog"}
+              onChange={(e) => setIsSeo(e.target.value === "seo")}
+              className="w-full flex h-10 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#1A3326]"
+            >
+              <option value="blog">В блоге</option>
+              <option value="seo">SEO-статья</option>
+            </select>
+          </div>
             
+          <div className="space-y-2">
+            <Label htmlFor="status" className="text-stone-700">Статус публикации</Label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ContentStatus)}
+              className="w-full flex h-10 rounded-md border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none focus:ring-2 focus:ring-[#1A3326]"
+            >
+              <option value="published">Опубликовано</option>
+              <option value="draft">Черновик</option>
+            </select>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="status">Статус публикации</Label>
-              <Select value={status} onValueChange={(v) => setStatus(v as ContentStatus)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Черновик</SelectItem>
-                  <SelectItem value="published">Опубликовано</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-          <div className="space-y-4 rounded-xl border bg-card p-4 shadow-sm">
+          <div className="space-y-4 rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
             <ImageUpload 
               value={image} 
               onChange={setImage} 
@@ -281,49 +272,52 @@ const handleSubmit = async (submitStatus?: ContentStatus) => {
               aspectRatio="16/9" 
             />
 
-              <div className="space-y-3 pt-2 border-t mt-4">
-                <h4 className="text-sm font-medium leading-none">Метаданные обложки</h4>
+              <div className="space-y-3 pt-4 border-t border-stone-100 mt-4">
+                <h4 className="text-sm font-medium text-stone-800 leading-none">Метаданные обложки</h4>
                 
                 <div className="space-y-1.5">
-                  <Label htmlFor="imageAlt" className="text-xs text-muted-foreground">Alt</Label>
+                  <Label htmlFor="imageAlt" className="text-xs text-stone-500">Alt</Label>
                   <Input 
                     id="imageAlt" 
                     value={seo.imageAlt || ""} 
                     onChange={(e) => setSeo({ ...seo, imageAlt: e.target.value })} 
                     placeholder="Описание фото для SEO" 
-                    className="h-8 text-sm" 
+                    className="h-8 text-sm focus-visible:ring-[#1A3326]" 
                   />
                 </div>
                 
                 <div className="space-y-1.5">
-                  <Label htmlFor="imageTitle" className="text-xs text-muted-foreground">Заголовок</Label>
+                  <Label htmlFor="imageTitle" className="text-xs text-stone-500">Заголовок</Label>
                   <Input 
                     id="imageTitle" 
                     value={seo.imageTitle || ""} 
                     onChange={(e) => setSeo({ ...seo, imageTitle: e.target.value })} 
-                    className="h-8 text-sm" 
+                    className="h-8 text-sm focus-visible:ring-[#1A3326]" 
                   />
                 </div>
                 
                 <div className="space-y-1.5">
-                  <Label htmlFor="imageDesc" className="text-xs text-muted-foreground">Описание (Description)</Label>
+                  <Label htmlFor="imageDesc" className="text-xs text-stone-500">Описание (Description)</Label>
                   <Textarea 
                     id="imageDesc" 
                     value={seo.imageDescription || ""} 
                     onChange={(e) => setSeo({ ...seo, imageDescription: e.target.value })} 
                     rows={2} 
-                    className="text-sm resize-none" 
+                    className="text-sm resize-none focus-visible:ring-[#1A3326]" 
                   />
                 </div>
               </div>
           </div>
-            <div className="space-y-2">
-              <Label htmlFor="tags">Теги</Label>
-              <Input id="tags" value={tagsInput} onChange={(e) => handleTagsChange(e.target.value)} placeholder="тег1, тег2, тег3" />
+<div className="space-y-2">
+              <Label htmlFor="tags" className="text-stone-700">Теги</Label>
+              <Input id="tags" value={tagsInput} onChange={(e) => handleTagsChange(e.target.value)} placeholder="Свадьба, Уход, Тренды" className="focus-visible:ring-[#1A3326]"/>
             </div>
           </div>
 
-          <SEOFields value={seo} onChange={setSeo} defaultTitle={title} image={image} />
+          <div className="lg:col-span-3 mt-6">
+            <SEOFields value={seo} onChange={setSeo} defaultTitle={title} image={image} />
+          </div>
+
         </div>
       </div>
   );

@@ -25,7 +25,7 @@ export default async function EditBlogPostPage({ params }: PageProps) {
   }));
 
   return (
-<div className="bg-[#FCF9F5] min-h-screen text-stone-800 p-6 md:p-8 font-sans">
+    <div className="bg-[#FCF9F5] min-h-screen text-stone-800 p-6 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto mb-6 flex items-center gap-4">
         <Link 
           href="/admin/blog" 
@@ -36,6 +36,7 @@ export default async function EditBlogPostPage({ params }: PageProps) {
         <h1 className="text-xl font-semibold text-stone-900">Редактировать статью</h1>
       </div>
 
+      <ContentForm
         contentType="blog"
         initialData={{
           ...serializedPost,

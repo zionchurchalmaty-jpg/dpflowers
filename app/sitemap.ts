@@ -6,7 +6,13 @@ const baseUrl = "https://dpflowers.kz";
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = (await getPublishedContent("products").catch(() => [])) || [];
+  const [productsRaw, articlesRaw] = await Promise.all([
+    getPublishedContent("products").catch(() => []),
+    getPublishedContent("blog").catch(() => []),
+  ]);
+
+  const products = productsRaw || [];
+  const articles = articlesRaw || [];
 
   const generateUrl = (
     path: string,
@@ -31,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPaths = [
     { path: "", priority: 1.0, freq: "daily" as const },
+    { path: "/blog", priority: 0.8, freq: "daily" as const },
   ];
 
   const staticUrls = staticPaths.map((route) =>
@@ -44,5 +51,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return generateUrl(path, date, 0.9, "weekly");
   });
 
-  return [...staticUrls, ...productUrls];
+  const articleUrls = articles.map((article: any) => {
+    const date = article.updatedAt ? new Date(article.updatedAt) : new Date();
+    const path = `/blog/${article.slug || article.id}`;
+    
+    return generateUrl(path, date, 0.8, "weekly");
+  });
+
+  return [...staticUrls, ...productUrls, ...articleUrls];
 }
